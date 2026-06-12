@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Electrical Quotation</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    padding:15px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+    border-bottom:3px solid #2563eb;
+    padding-bottom:20px;
+}
+
+.company h1{
+    color:#2563eb;
+    font-size:32px;
+}
+
+.company p{
+    margin-top:5px;
+    color:#555;
+}
+
+.quote{
+    text-align:right;
+}
+
+.quote h2{
+    color:#111827;
+    font-size:28px;
+}
+
+.form-grid{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.input-group label{
+    margin-bottom:8px;
+    font-weight:bold;
+    color:#111827;
+}
+
+.input-group input,
+.input-group textarea{
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    font-size:15px;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+    margin-top:30px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:750px;
+}
+
+th{
+    background:#2563eb;
+    color:white;
+    padding:14px;
+    font-size:15px;
+}
+
+td{
+    border:1px solid #dbe4ee;
+    padding:10px;
+    text-align:center;
+}
+
+td select,
+td input{
+    width:100%;
+    padding:10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+}
+
+.buttons{
+    margin-top:25px;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    padding:14px 22px;
+    border-radius:10px;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.add-btn{
+    background:#10b981;
+}
+
+.download-btn{
+    background:#2563eb;
+}
+
+.delete-btn{
+    background:#ef4444;
+}
+
+.footer{
+    margin-top:60px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.footer-left{
+    color:#555;
+}
+
+.signature{
+    text-align:right;
+    margin-top:50px;
+    font-weight:bold;
+}
+
+@media(max-width:768px){
+
+    .header{
+        flex-direction:column;
+    }
+
+    .quote{
+        text-align:left;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card" id="quotation">
+
+    <div class="header">
+
+        <div class="company">
+
+            <h1>VSS ELECTRICAL wORKS</h1>
+
+            <p>Phone : +91 7010764077</p>
+
+        </div>
+
+        <div class="quote">
+
+            <h2>QUOTATION</h2>
+
+            <p>
+                <b>Quotation No :</b>
+                <span id="quotationNo"></span>
+            </p>
+
+            <p>
+                <b>Date :</b>
+                <span id="date"></span>
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="input-group">
+
+            <label>Customer Name</label>
+
+            <input type="text"
+            id="customerName"
+            placeholder="Enter customer name">
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Customer Address</label>
+
+            <textarea rows="3"
+            id="customerAddress"
+            placeholder="Enter customer address"></textarea>
+
+        </div>
+
+    </div>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>S.No</th>
+                    <th>Category</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th class="action-column">
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </div>
+
+    <div class="buttons">
+
+        <button class="btn add-btn"
+        onclick="addRow()">
+
+        + Add Item
+
+        </button>
+
+        <button class="btn download-btn"
+        onclick="downloadQuotation()">
+
+        Download Invoice
+
+        </button>
+
+    </div>
+
+    <div class="footer">
+
+        <div class="footer-left">
+
+            <p><b>Terms & Conditions</b></p>
+
+            <p>
+                Thank you for choosing
+                VSS ELECTRICAL WORKS
+            </p>
+
+        </div>
+
+        
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+document.getElementById("date").innerText =
+new Date().toLocaleDateString();
+
+/* MASTER DATA */
+
+const itemData = {
+
+    "Switches" : [
+        "1 Way Switch",
+        "2 Way Switch",
+        "Bell Switch",
+        "Modular Switch"
+    ],
+
+    "Lighting" : [
+        "LED Bulb",
+        "Tube Light",
+        "Panel Light",
+        "Flood Light"
+    ],
+
+    "Fans" : [
+        "Ceiling Fan",
+        "Exhaust Fan",
+        "Wall Fan"
+    ],
+
+    "Wiring" : [
+        "1 Sqmm Wire",
+        "2.5 Sqmm Wire",
+        "Cable Wire"
+    ],
+
+    "Sockets" : [
+        "2 Pin Socket",
+        "3 Pin Socket",
+        "USB Socket"
+    ]
+
+};
+
+function createItemOptions(category){
+
+    return itemData[category]
+    .map(item =>
+
+    `<option>${item}</option>`
+
+    ).join('');
+
+}
+
+function addRow(){
+
+    let tableBody =
+    document.getElementById("tableBody");
+
+    let rowCount =
+    tableBody.rows.length + 1;
+
+    let categoryOptions =
+    Object.keys(itemData)
+    .map(category =>
+
+    `<option>${category}</option>`
+
+    ).join('');
+
+    let firstCategory =
+    Object.keys(itemData)[0];
+
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+
+        <td>${rowCount}</td>
+
+        <td>
+
+            <select onchange="updateItems(this)">
+
+                ${categoryOptions}
+
+            </select>
+
+        </td>
+
+        <td>
+
+            <select class="item-select">
+
+                ${createItemOptions(firstCategory)}
+
+            </select>
+
+        </td>
+
+        <td>
+
+            <input type="number"
+            min="1"
+            value="1">
+
+        </td>
+
+        <td class="action-column">
+
+            <button class="btn delete-btn"
+            onclick="deleteRow(this)">
+
+            Delete
+
+            </button>
+
+        </td>
+
+    `;
+
+    tableBody.appendChild(row);
+
+}
+
+function updateItems(categorySelect){
+
+    let category =
+    categorySelect.value;
+
+    let row =
+    categorySelect.parentElement.parentElement;
+
+    let itemSelect =
+    row.querySelector(".item-select");
+
+    itemSelect.innerHTML =
+    createItemOptions(category);
+
+}
+
+function deleteRow(button){
+
+    button.parentElement.parentElement.remove();
+
+    updateSerialNumbers();
+
+}
+
+function updateSerialNumbers(){
+
+    let rows =
+    document.querySelectorAll("#tableBody tr");
+
+    rows.forEach((row,index)=>{
+
+        row.cells[0].innerText =
+        index + 1;
+
+    });
+
+}
+
+function downloadQuotation(){
+
+    let customerName =
+    document.getElementById("customerName").value;
+
+    let customerAddress =
+    document.getElementById("customerAddress").value;
+
+    let rows =
+    document.querySelectorAll("#tableBody tr");
+
+    let tableRows = "";
+
+    rows.forEach((row,index)=>{
+
+        let category =
+        row.cells[1]
+        .querySelector("select").value;
+
+        let item =
+        row.cells[2]
+        .querySelector("select").value;
+
+        let qty =
+        row.cells[3]
+        .querySelector("input").value;
+
+        tableRows += `
+
+        <tr>
+
+            <td>${index+1}</td>
+            <td>${category}</td>
+            <td>${item}</td>
+            <td>${qty}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    let printWindow =
+    window.open('', '', 'width=900,height=700');
+
+    printWindow.document.write(`
+
+    <html>
+
+    <head>
+
+        <title>Invoice</title>
+
+        <style>
+
+            body{
+                font-family:Arial;
+                padding:35px;
+                color:#111827;
+            }
+
+            .top{
+                display:flex;
+                justify-content:space-between;
+                border-bottom:3px solid #2563eb;
+                padding-bottom:20px;
+                margin-bottom:30px;
+            }
+
+            h1{
+                color:#2563eb;
+                margin-bottom:10px;
+            }
+
+            table{
+                width:100%;
+                border-collapse:collapse;
+                margin-top:25px;
+            }
+
+            th{
+                background:#2563eb;
+                color:white;
+                padding:12px;
+            }
+
+            td{
+                border:1px solid #d1d5db;
+                padding:12px;
+                text-align:center;
+            }
+
+            .customer{
+                margin-top:20px;
+                line-height:1.8;
+            }
+
+            .footer{
+                margin-top:60px;
+                display:flex;
+                justify-content:space-between;
+            }
+
+            .signature{
+                margin-top:80px;
+                text-align:right;
+                font-weight:bold;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="top">
+
+            <div>
+
+                <h1>ARAVIND ELECTRICALS</h1>
+
+                <p>Dharmapuram, Puducherry</p>
+
+                <p>Phone : +91 9876543210</p>
+
+            </div>
+
+            <div>
+
+                <h2>QUOTATION</h2>
+
+                <p>
+                    <b>Date :</b>
+                    ${new Date().toLocaleDateString()}
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="customer">
+
+            <p>
+                <b>Customer Name :</b>
+                ${customerName}
+            </p>
+
+            <p>
+                <b>Customer Address :</b>
+                ${customerAddress}
+            </p>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>S.No</th>
+                    <th>Category</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                ${tableRows}
+
+            </tbody>
+
+        </table>
+
+        <div class="footer">
+
+            <div>
+
+                <p><b>Terms & Conditions</b></p>
+
+                <p>
+                    Thank you for choosing
+                    ARAVIND ELECTRICALS
+                </p>
+
+            </div>
+
+            <div class="signature">
+
+                Authorized Signature
+
+            </div>
+
+        </div>
+
+        <script>
+
+            window.onload = function(){
+
+                window.print();
+
+            }
+
+        <\/script>
+
+    </body>
+
+    </html>
+
+    `);
+
+    printWindow.document.close();
+
+}
+
+addRow();
+
+
+
+function generateQuotationNumber(){
+
+    let now = new Date();
+
+    let day =
+    String(now.getDate()).padStart(2,'0');
+
+    let month =
+    String(now.getMonth()+1).padStart(2,'0');
+
+    let year =
+    String(now.getFullYear()).slice(-2);
+
+    let hour =
+    String(now.getHours()).padStart(2,'0');
+
+    let quotationNo =
+    `QT-${day}${month}${year}-${hour}`;
+
+    document.getElementById("quotationNo")
+    .innerText = quotationNo;
+
+}
+
+generateQuotationNumber();
+
+
+</script>
+
+</body>
+</html>
